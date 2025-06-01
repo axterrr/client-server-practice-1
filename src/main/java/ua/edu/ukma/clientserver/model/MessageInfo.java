@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class MessageInfo {
-    private int clientNumber;
+    private byte clientNumber;
     private long messageNumber;
     private int teamCode;
     private int userId;

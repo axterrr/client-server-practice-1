@@ -13,10 +13,10 @@ import java.security.Key;
 
 public class Client {
 
-    private static int clientCounter = 0;
+    private static byte clientCounter = 0;
     private final ObjectMapper objectMapper;
     private final Cipher cipher;
-    private final int clientNumber;
+    private final byte clientNumber;
     private long messageCounter;
 
     @SneakyThrows
@@ -34,18 +34,18 @@ public class Client {
 
         byte[] dataBytes = encryptData(messageInfo.getCredentials());
         int messageSize = dataBytes.length + 8;
-        int packageSize = messageSize + 21;
+        int packageSize = messageSize + 18;
 
         ByteBuffer buffer = ByteBuffer.allocate(packageSize).order(ByteOrder.BIG_ENDIAN);
         buffer.put((byte) 0x13)
-                .putInt(messageInfo.getClientNumber())
+                .put(messageInfo.getClientNumber())
                 .putLong(messageInfo.getMessageNumber())
                 .putInt(packageSize)
-                .putShort(CRC16.calculate(buffer.array(), 0, 17))
+                .putShort(CRC16.calculate(buffer.array(), 0, 14))
                 .putInt(messageInfo.getTeamCode())
                 .putInt(messageInfo.getUserId())
                 .put(dataBytes)
-                .putShort(CRC16.calculate(buffer.array(), 19, messageSize));
+                .putShort(CRC16.calculate(buffer.array(), 16, messageSize));
 
         return buffer.array();
     }

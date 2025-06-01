@@ -23,7 +23,7 @@ public class Server {
     }
 
     public MessageInfo decode(byte[] bytes) {
-        if (bytes == null || bytes.length < 29) {
+        if (bytes == null || bytes.length < 26) {
             throw new IllegalArgumentException();
         }
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
@@ -33,23 +33,23 @@ public class Server {
             throw new IllegalArgumentException();
         }
 
-        int bSrc = buffer.getInt();
+        byte bSrc = buffer.get();
         long bPktId = buffer.getLong();
         int wLen = buffer.getInt();
         short wCrc1 = buffer.getShort();
-        short expectedCrc1 = CRC16.calculate(bytes, 0, 17);
+        short expectedCrc1 = CRC16.calculate(bytes, 0, 14);
         if (expectedCrc1 != wCrc1) {
             throw new IllegalArgumentException();
         }
 
         int cType = buffer.getInt();
         int bUserId = buffer.getInt();
-        int messageSize = wLen - 21;
+        int messageSize = wLen - 18;
         int dataSize = messageSize - 8;
         byte[] dataBytes = new byte[dataSize];
         buffer.get(dataBytes);
         short wCrc2 = buffer.getShort();
-        short expectedCrc2 = CRC16.calculate(bytes, 19, messageSize);
+        short expectedCrc2 = CRC16.calculate(bytes, 16, messageSize);
         if (expectedCrc2 != wCrc2) {
             throw new IllegalArgumentException();
         }
